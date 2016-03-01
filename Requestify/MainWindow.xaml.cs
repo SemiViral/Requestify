@@ -1,4 +1,7 @@
-﻿using Requestify.Resources.API;
+﻿using Newtonsoft.Json;
+using Requestify.Properties;
+using Requestify.Resources.API;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +29,7 @@ namespace Requestify
             InitializeComponent();
         }
 
-        List<YoutubeResponse.Snippet> playlistItems = new List<YoutubeResponse.Snippet>();
+        List<YoutubeResponse.Item> playlistItems = new List<YoutubeResponse.Item>();
         public static Dictionary<string, string> playlist = new Dictionary<string, string>();
 
         private void btnJoinChannel_Click(object sender, RoutedEventArgs e)
@@ -39,6 +42,12 @@ namespace Requestify
             playlistItems = Youtube.GetPlaylistItems(txtbox_playlistID.Text);
 
             playlistQueue.ItemsSource = Youtube.CreatePlaylist(playlistItems);
+            playlistView.ItemsSource = Youtube.CreatePlaylist(playlistItems);
+        }
+
+        private void playlistQueue_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedSong.Text = playlistItems[playlistQueue.SelectedIndex].snippet.title;
         }
     }
 }

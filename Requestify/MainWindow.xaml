@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Stream DJ" Height="500" Width="800">
     <Grid>
-        <WebBrowser x:Name="chatWindow" Margin="325,10,10,10" ClipToBounds="True"/>
+        <WebBrowser x:Name="chatWindow" Margin="325,10,10,10" ClipToBounds="True" Visibility="Hidden"/>
         <TextBox x:Name="txtbox_username" HorizontalAlignment="Left" Height="23" Margin="10,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="label" Content="Username" HorizontalAlignment="Left" Margin="9,3,0,0" VerticalAlignment="Top" Width="76" FontStyle="Italic"/>
         <Label x:Name="label1" Content="Auth Token" HorizontalAlignment="Left" Margin="134,3,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
@@ -16,10 +16,20 @@
         <TextBox x:Name="txtbox_channel" HorizontalAlignment="Left" Height="23" Margin="10,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
         <Label x:Name="label2" Content="Channel" HorizontalAlignment="Left" Margin="9,54,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
         <Button x:Name="btnJoinChannel" Content="Join Channel" HorizontalAlignment="Left" Margin="228,80,0,0" VerticalAlignment="Top" Width="80" Height="23" Click="btnJoinChannel_Click" IsEnabled="{Binding ElementName=txtbox_channel,Path=Text.Length}"/>
-        <TextBox x:Name="txtbox_playlistID" HorizontalAlignment="Left" Height="23" Margin="10,149,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
+        <TextBox x:Name="txtbox_playlistID" HorizontalAlignment="Left" Height="23" Margin="10,149,0,0" VerticalAlignment="Top" Width="213" Text="PLcVmBU0_gDGxnVInmFjRhvkHtTGpQcD8G"/>
         <Label x:Name="label3" Content="Youtube Playlist ID" HorizontalAlignment="Left" Margin="9,123,0,0" VerticalAlignment="Top" Cursor="None" FontStyle="Italic"/>
-        <Button x:Name="btnGetVideos" Content="Get Videos" HorizontalAlignment="Left" Margin="233,149,0,0" VerticalAlignment="Top" Width="75" Height="23" IsEnabled="{Binding ElementName=txtbox_playlistID,Path=Text.Length}" Click="btnGetVideos_Click"/>
-        <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Height="235" Margin="135,225,0,0" VerticalAlignment="Top" Width="185"/>
+        <Button x:Name="btnGetVideos" Content="Get Videos" HorizontalAlignment="Left" Margin="228,149,0,0" VerticalAlignment="Top" Width="80" Height="23" IsEnabled="{Binding ElementName=txtbox_playlistID,Path=Text.Length}" Click="btnGetVideos_Click"/>
+        <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Margin="10,225,0,10" Width="150" IsSynchronizedWithCurrentItem="False" SelectionChanged="playlistQueue_SelectionChanged"/>
+        <TextBlock x:Name="selectedSong" HorizontalAlignment="Left" Margin="13,204,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FF219300"/>
+        <Label x:Name="label4" Content="Selected Song:" HorizontalAlignment="Left" Margin="9,186,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
+        <ListView x:Name="playlistView" HorizontalAlignment="Left" Height="234" Margin="165,225,0,0" VerticalAlignment="Top" Width="617" SelectionMode="Single">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Song" Width="200"/>
+                    <GridViewColumn Header="Youtube ID" Width="150"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
     </Grid>
 </Window>
