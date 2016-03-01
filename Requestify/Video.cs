@@ -8,13 +8,19 @@ namespace Requestify
 {
     class Video
     {
+        public string title;
+        public string id;
+
         public Video (string title, string id)
         {
             this.title = title;
             this.id = id;
         }
 
-        string title;
-        string id;
+        public override string ToString()
+        {
+            return title;
+        }
+
     }
 }

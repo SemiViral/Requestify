@@ -30,7 +30,7 @@ namespace Requestify
         }
 
         List<YoutubeResponse.Item> playlistItems = new List<YoutubeResponse.Item>();
-        public static Dictionary<string, string> playlist = new Dictionary<string, string>();
+        List<Video> listVideos = new List<Video>();
 
         private void btnJoinChannel_Click(object sender, RoutedEventArgs e)
         {
@@ -40,14 +40,14 @@ namespace Requestify
         private void btnGetVideos_Click(object sender, RoutedEventArgs e)
         {
             playlistItems = Youtube.GetPlaylistItems(txtbox_playlistID.Text);
+            listVideos = Youtube.CreatePlaylist(playlistItems);
 
-            playlistQueue.ItemsSource = Youtube.CreatePlaylist(playlistItems);
-            playlistView.ItemsSource = Youtube.CreatePlaylist(playlistItems);
+            playlistQueue.ItemsSource = listVideos;
         }
 
         private void playlistQueue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedSong.Text = playlistItems[playlistQueue.SelectedIndex].snippet.title;
+            selectedSong.Text = listVideos[playlistQueue.SelectedIndex].title;
         }
     }
 }
