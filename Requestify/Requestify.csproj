@@ -139,6 +139,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Resources\API\YoutubeResponse.cs" />
+    <Compile Include="Video.cs" />
     <Compile Include="Youtube.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

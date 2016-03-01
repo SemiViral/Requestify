@@ -25,13 +25,13 @@ namespace Requestify
             return results.items;
         }
 
-        public static Dictionary<string, string> CreatePlaylist(List<YoutubeResponse.Item> playlistItems)
+        public static List<Video> CreatePlaylist(List<YoutubeResponse.Item> playlistItems)
         {
-            Dictionary<string, string> playlist = new Dictionary<string, string>();
+            List<Video> playlist = new List<Video>();
 
             foreach (var item in playlistItems)
             {
-                playlist.Add(item.snippet.title, item.snippet.resourceId.videoId);
+                playlist.Add(new Video(item.snippet.title, item.snippet.resourceId.videoId));
             }
 
             return playlist;

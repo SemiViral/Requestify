@@ -19,17 +19,9 @@
         <TextBox x:Name="txtbox_playlistID" HorizontalAlignment="Left" Height="23" Margin="10,149,0,0" VerticalAlignment="Top" Width="213" Text="PLcVmBU0_gDGxnVInmFjRhvkHtTGpQcD8G"/>
         <Label x:Name="label3" Content="Youtube Playlist ID" HorizontalAlignment="Left" Margin="9,123,0,0" VerticalAlignment="Top" Cursor="None" FontStyle="Italic"/>
         <Button x:Name="btnGetVideos" Content="Get Videos" HorizontalAlignment="Left" Margin="228,149,0,0" VerticalAlignment="Top" Width="80" Height="23" IsEnabled="{Binding ElementName=txtbox_playlistID,Path=Text.Length}" Click="btnGetVideos_Click"/>
-        <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Margin="10,225,0,10" Width="150" IsSynchronizedWithCurrentItem="False" SelectionChanged="playlistQueue_SelectionChanged"/>
+        <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Margin="10,225,0,10" Width="298" IsSynchronizedWithCurrentItem="False" SelectionChanged="playlistQueue_SelectionChanged"/>
         <TextBlock x:Name="selectedSong" HorizontalAlignment="Left" Margin="13,204,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FF219300"/>
         <Label x:Name="label4" Content="Selected Song:" HorizontalAlignment="Left" Margin="9,186,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-        <ListView x:Name="playlistView" HorizontalAlignment="Left" Height="234" Margin="165,225,0,0" VerticalAlignment="Top" Width="617" SelectionMode="Single">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Song" Width="200"/>
-                    <GridViewColumn Header="Youtube ID" Width="150"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
-
+        <ListView x:Name="playlistView" HorizontalAlignment="Left" Height="234" Margin="615,225,0,0" VerticalAlignment="Top" Width="167" SelectionMode="Single" />
     </Grid>
 </Window>
