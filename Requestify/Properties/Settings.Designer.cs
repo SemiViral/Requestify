@@ -25,10 +25,19 @@ namespace Requestify.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AIzaSyDAzZAKOE4iKtQA8nV29qYmadmBb74TdUk")]
+        [global::System.Configuration.DefaultSettingValueAttribute("AIzaSyDW_Xcg3nrg6c3pght8OOen9x886zAMWXw")]
         public string apiKey {
             get {
                 return ((string)(this["apiKey"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("oauth:wir7i1t66fg9faf9741kgkiakbdw3o")]
+        public string oauthToken {
+            get {
+                return ((string)(this["oauthToken"]));
             }
         }
     }

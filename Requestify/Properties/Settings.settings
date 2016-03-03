@@ -1,9 +1,12 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="StreamDJ.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Requestify.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="apiKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">AIzaSyDAzZAKOE4iKtQA8nV29qYmadmBb74TdUk</Value>
+      <Value Profile="(Default)">AIzaSyDW_Xcg3nrg6c3pght8OOen9x886zAMWXw</Value>
+    </Setting>
+    <Setting Name="oauthToken" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">oauth:wir7i1t66fg9faf9741kgkiakbdw3o</Value>
     </Setting>
   </Settings>
 </SettingsFile>

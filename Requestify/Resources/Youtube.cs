@@ -23,7 +23,13 @@ namespace Requestify
             string apiNextPageToken = $"&pageToken={pageToken}";
             string apiPlaylistId = $"&playlistId={playlistID}";
             string apiFields = "&fields=items%2CnextPageToken%2CpageInfo%2CprevPageToken";
-            string apiKey = $"$key={Settings.Default.apiKey}";
+            string apiKey = $"&key={Settings.Default.apiKey}";
+
+            YoutubeResponse.RootObject results;
+            List<YoutubeResponse.Item> itemResults = new List<YoutubeResponse.Item>();
+
+            int totalPages;
+            int pagesComplete = 0;
 
             do
             {
@@ -32,13 +38,22 @@ namespace Requestify
                 var request = new RestRequest(Method.GET);
 
                 IRestResponse response = client.Execute(request);
-                var results = JsonConvert.DeserializeObject<YoutubeResponse.RootObject>(response.Content);
+                results = JsonConvert.DeserializeObject<YoutubeResponse.RootObject>(response.Content);
+
+                itemResults.AddRange(results.items);
+
+                if (!string.IsNullOrWhiteSpace(results.nextPageToken))
+                {
+                    pageToken = results.nextPageToken;
+                }
+
+                totalPages = GetTotalPages(results.pageInfo.totalResults, results.pageInfo.resultsPerPage);
+
+                pagesComplete += 1;
             }
-            while (results.pageInfo.totalResults > results.pageInfo.resultsPerPage);
+            while (pagesComplete < totalPages);
 
-            
-
-            return results.items;
+            return itemResults;
         }
 
         public static List<Video> CreatePlaylist(List<YoutubeResponse.Item> playlistItems)
@@ -63,10 +78,23 @@ namespace Requestify
             }
             else
             {
+                apiNextPageToken = $"&pageToken={pageToken}";
                 uriString = apiBase + apiPart + apiMaxResults + apiNextPageToken + apiPlaylistId + apiFields + apiKey;
             }
 
             return uriString;
+        }
+
+        public static int GetTotalPages(int totalResults, int resultsPerPage)
+        {
+            int pages = Convert.ToInt32(Math.Floor(Convert.ToDouble(totalResults) / Convert.ToDouble(resultsPerPage)));
+
+            if (totalResults % resultsPerPage != 0)
+            {
+                pages += 1;
+            }
+
+            return pages;
         }
     }
 }
