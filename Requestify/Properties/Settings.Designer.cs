@@ -32,12 +32,51 @@ namespace Requestify.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("oauth:wir7i1t66fg9faf9741kgkiakbdw3o")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string oauthToken {
             get {
                 return ((string)(this["oauthToken"]));
+            }
+            set {
+                this["oauthToken"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("55a009amh6gz5oej5vntu6yfbsnvji6")]
+        public string clientID {
+            get {
+                return ((string)(this["clientID"]));
+            }
+            set {
+                this["clientID"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string username {
+            get {
+                return ((string)(this["username"]));
+            }
+            set {
+                this["username"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string currency {
+            get {
+                return ((string)(this["currency"]));
+            }
+            set {
+                this["currency"] = value;
             }
         }
     }

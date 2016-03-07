@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Requestify
 {
-    class Video
+    public class Video
     {
         public string title;
         public string id;

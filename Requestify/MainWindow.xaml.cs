@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Requestify.Properties;
+using Requestify.Resources;
 using Requestify.Resources.API;
 using RestSharp;
 using System;
@@ -26,91 +27,109 @@ namespace Requestify
         public MainWindow()
         {
             InitializeComponent();
-            passbox_authToken.Password = Properties.Settings.Default.oauthToken;
         }
 
         List<YoutubeResponse.Item> playlistItems = new List<YoutubeResponse.Item>();
-        static List<Video> listVideos = new List<Video>();
+        public static List<Video> listVideos = new List<Video>();
+        public static List<Playlist> listPlaylists = new List<Playlist>();
+        public static List<Video> requests = new List<Video>();
         public static string username;
         public static string pass;
         public static string channel;
-
-
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
+        public static string currency;
 
         private void btnJoinChannel_Click(object sender, RoutedEventArgs e)
         {
-            username = txtbox_username.Text;
-            pass = passbox_authToken.Password;
+            username = Settings.Default.username;
+            pass = Settings.Default.oauthToken;
             channel = txtbox_channel.Text;
 
-            Thread ircThread = new Thread( () =>
-              {
-                  CheckForMessages(username, pass, channel);
-              }
-            );
-            ircThread.IsBackground = true;
-            ircThread.Name = "IRC";
-            ircThread.Start();
+            IrcClient.CreateIrcThread(username, pass, channel);
         }
-
-        private void btnGetVideos_Click(object sender, RoutedEventArgs e)
+        
+        private void GetVideos(object sender, SelectionChangedEventArgs e)
         {
-            playlistItems = Youtube.GetPlaylistItems(txtbox_playlistID.Text);
-            listVideos = Youtube.CreatePlaylist(playlistItems);
+            listVideos = listPlaylists[playlistSelector.SelectedIndex].videos;
 
             playlistQueue.ItemsSource = listVideos;
-            lbl_selectedSong.Content = $"Selected Song 0/{listVideos.Count}";
+            playlistQueue.SelectedItem = 0;
+            playlistQueue.SelectedIndex = 0;
+            lbl_selectedSong.Content = $"Selected Song {playlistQueue.SelectedIndex + 1}/{listVideos.Count}";
         }
 
         private void playlistQueue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            selectedSong.Text = $"{listVideos[playlistQueue.SelectedIndex].title} - {listVideos[playlistQueue.SelectedIndex].id}";
-            lbl_selectedSong.Content = $"Selected Song {playlistQueue.SelectedIndex +1}/{listVideos.Count}";
+            if (playlistQueue.SelectedIndex == -1)
+            {
+                lbl_selectedSong.Content = $"Selected Song 0/{listVideos.Count}";
+            }
+            else
+            {
+                lbl_selectedSong.Content = $"Selected Song {playlistQueue.SelectedIndex + 1}/{listVideos.Count}";
+            }
         }
-
         
         private void btnRequestSong_Click(object sender, RoutedEventArgs e)
         {
-            IrcClient.RequestSong(sender, e);
-            //ircThread.sendChatMessage($"!song add {listVideos[playlistQueue.SelectedIndex].id}");
-            //Console.Write($"Requesting {listVideos[playlistQueue.SelectedIndex].title}...");
+            IrcClient.CreateIrcSendThread(Settings.Default.username, Settings.Default.oauthToken, channel, $"!song add {listVideos[((MainWindow)Application.Current.MainWindow).playlistQueue.SelectedIndex].id}");
+            
+
+            requests.Add(listVideos[playlistQueue.SelectedIndex]);
+            requestBox.Items.Refresh();
+
+            listVideos.RemoveAt(playlistQueue.SelectedIndex);
+            playlistQueue.Items.Refresh();
         }
-        
 
-        public static void CheckForMessages(string username, string pass, string channel)
+        private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
         {
-            IrcClient irc = new IrcClient("irc.twitch.tv", 6667, username, pass, listVideos);
-            irc.joinRoom(channel);
+            Playlist playlist = new Playlist(txtbox_playlistID.Text);
 
-            while (true)
+            listPlaylists.Add(playlist);
+            playlistSelector.ItemsSource = listPlaylists;
+
+            playlistSelector.SelectedIndex = listPlaylists.Count - 1;
+            txtbox_playlistID.Text = "";
+        }
+
+        private void btnGetAuthToken_Click(object sender, RoutedEventArgs e)
+        {
+            // Create a new Authentication Window w/ a WebBrowser control and send it to the proper Oauth URL
+            Authentication authWindow = new Authentication();
+            authWindow.authBrowser.Source = new Uri(Twitch.authUri);
+            authWindow.Show();
+        }
+
+        public void SaveUserSettings(string username, string accessToken)
+        {
+            Settings.Default.oauthToken = accessToken;
+            Settings.Default.username = username;
+            Settings.Default.Save();
+        }
+
+        private void DefaultWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            requestBox.ItemsSource = requests;
+            LoadIfTokenValid();
+        }
+
+        private void LoadIfTokenValid()
+        {
+            if (Twitch.ValidateToken(Settings.Default.oauthToken))
             {
-                string message = irc.readMessage();
-
-                if (message.StartsWith(":"))
-                {
-                    try
-                    {
-                        Console.WriteLine(IrcClient.formatMessage(message));
-                    }
-                    catch
-                    {
-
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(message);
-                    if (message.Contains("PING :tmi.twitch.tv"))
-                    {
-                        irc.sendIrcMessage("PONG :tmi.twitch.tv");
-                        Console.WriteLine("PONGing...");
-                    }
-                }
+                Twitch.accessToken = Settings.Default.oauthToken;
+                Twitch.username = Settings.Default.username;
+                ((MainWindow)Application.Current.MainWindow).authStatus.Fill = new SolidColorBrush(Twitch.greenText);
+                ((MainWindow)Application.Current.MainWindow).btnGetAuthToken.IsEnabled = false;
+                ((MainWindow)Application.Current.MainWindow).txtbox_username.IsEnabled = false;
+                SaveUserSettings(Settings.Default.username, Settings.Default.oauthToken);
+                txtbox_username.Text = Settings.Default.username;
+                btnGetAuthToken.IsEnabled = false;
+                txtbox_username.IsEnabled = false;
             }
         }
+
+        
     }
+
 }

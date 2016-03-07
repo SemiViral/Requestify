@@ -5,24 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Requestify"
         mc:Ignorable="d"
-        Title="Requestify" Height="500" Width="800">
+        Title="Requestify" Height="600" Width="800" Loaded="DefaultWindow_Loaded">
     <Grid>
-        <WebBrowser x:Name="chatWindow" Margin="313,10,10,10" ClipToBounds="True"/>
-        <TextBox x:Name="txtbox_username" HorizontalAlignment="Left" Height="23" Margin="10,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label x:Name="label" Content="Username" HorizontalAlignment="Left" Margin="9,3,0,0" VerticalAlignment="Top" Width="76" FontStyle="Italic"/>
-        <Label x:Name="label1" Content="Auth Token" HorizontalAlignment="Left" Margin="134,3,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-        <PasswordBox x:Name="passbox_authToken" HorizontalAlignment="Left" Margin="135,26,0,0" VerticalAlignment="Top" Width="120" Height="23" IsEnabled="False"/>
-        <Button x:Name="btnLogin" Content="Login" HorizontalAlignment="Left" Margin="260,26,0,0" VerticalAlignment="Top" Width="48" Height="23" Click="btnLogin_Click" IsEnabled="{Binding ElementName=txtbox_username,Path=Text.Length}" Visibility="Hidden"/>
-        <TextBox x:Name="txtbox_channel" HorizontalAlignment="Left" Height="23" Margin="10,80,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="213"/>
-        <Label x:Name="label2" Content="Channel" HorizontalAlignment="Left" Margin="9,54,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-        <Button x:Name="btnJoinChannel" Content="Join Channel" HorizontalAlignment="Left" Margin="228,80,0,0" VerticalAlignment="Top" Width="80" Height="23" Click="btnJoinChannel_Click" IsEnabled="{Binding ElementName=txtbox_channel,Path=Text.Length}"/>
-        <TextBox x:Name="txtbox_playlistID" HorizontalAlignment="Left" Height="23" Margin="10,149,0,0" VerticalAlignment="Top" Width="213" Text="PLcVmBU0_gDGxnVInmFjRhvkHtTGpQcD8G"/>
-        <Label x:Name="label3" Content="Youtube Playlist ID" HorizontalAlignment="Left" Margin="9,123,0,0" VerticalAlignment="Top" Cursor="None" FontStyle="Italic"/>
-        <Button x:Name="btnGetVideos" Content="Get Videos" HorizontalAlignment="Left" Margin="228,149,0,0" VerticalAlignment="Top" Width="80" Height="23" IsEnabled="{Binding ElementName=txtbox_playlistID,Path=Text.Length}" Click="btnGetVideos_Click"/>
-        <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Margin="10,225,0,36" Width="298" IsSynchronizedWithCurrentItem="False" SelectionChanged="playlistQueue_SelectionChanged"/>
-        <TextBlock x:Name="selectedSong" HorizontalAlignment="Left" Margin="13,204,0,0" TextWrapping="Wrap" VerticalAlignment="Top" FontWeight="Bold" Foreground="#FF219300"/>
-        <Label x:Name="lbl_selectedSong" Content="Selected Song (0/0):" HorizontalAlignment="Left" Margin="9,186,0,0" VerticalAlignment="Top" FontStyle="Italic"/>
-        <Button x:Name="btnRequestSong" Content="Request Song" HorizontalAlignment="Left" Margin="228,438,0,0" VerticalAlignment="Top" Width="80" Height="21" Click="btnRequestSong_Click"/>
-        <Button x:Name="btnGetAuthToken" Content="Get Auth Token" HorizontalAlignment="Left" Margin="135,54,0,0" VerticalAlignment="Top" Width="120" Height="21"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="29*"/>
+            <ColumnDefinition Width="43*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="txtbox_username" HorizontalAlignment="Left" Height="23" Margin="10,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="144" Padding="0,2,0,0"/>
+        <Label x:Name="label" Content="Username" HorizontalAlignment="Left" Margin="9,0,0,0" VerticalAlignment="Top" Width="76" FontStyle="Italic" Height="26"/>
+        <Label x:Name="label1" Content="Auth Token" HorizontalAlignment="Left" Margin="164,0,0,0" VerticalAlignment="Top" FontStyle="Italic" Height="26" Width="69"/>
+        <TextBox x:Name="txtbox_channel" HorizontalAlignment="Left" Height="23" Margin="10,92,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="213" Padding="0,2,0,0" Text="aquatikjustice"/>
+        <Label x:Name="label2" Content="Channel" HorizontalAlignment="Left" Margin="9,66,0,0" VerticalAlignment="Top" FontStyle="Italic" Height="26" Width="53"/>
+        <Button x:Name="btnJoinChannel" Content="Join Channel" HorizontalAlignment="Left" Margin="228,92,0,0" VerticalAlignment="Top" Width="81" Height="23" Click="btnJoinChannel_Click" IsEnabled="{Binding ElementName=txtbox_channel,Path=Text.Length}" Padding="1,0,1,1"/>
+        <TextBox x:Name="txtbox_playlistID" HorizontalAlignment="Left" Height="23" Margin="10,222,0,0" VerticalAlignment="Top" Width="213" Text="PLcVmBU0_gDGxnVInmFjRhvkHtTGpQcD8G" Padding="0,2,0,0"/>
+        <Label x:Name="label3" Content="Youtube Playlist ID (cannot be private)" HorizontalAlignment="Left" Margin="9,196,0,0" VerticalAlignment="Top" Cursor="None" FontStyle="Italic" Height="26" Width="209"/>
+        <Button x:Name="btnAddPlaylist" Content="Add" HorizontalAlignment="Left" Margin="228,222,0,0" VerticalAlignment="Top" Width="81" Height="23" IsEnabled="{Binding ElementName=txtbox_playlistID,Path=Text.Length}" Click="btnAddPlaylist_Click" Padding="1,0,1,1"/>
+        <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Margin="10,300,0,69" Width="299" IsSynchronizedWithCurrentItem="False" SelectionChanged="playlistQueue_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        <Label x:Name="lbl_selectedSong" Content="Selected Song (0/0)" Margin="10,507,0,0" FontStyle="Italic" HorizontalAlignment="Left" Width="112" Height="22" VerticalAlignment="Top" Padding="0,2,0,0"/>
+        <Button x:Name="btnRequestSong" Content="Request (1453 coins available)" Margin="0,505,8,0" Click="btnRequestSong_Click" Padding="5,0,5,1" IsEnabled="{Binding ElementName=playlistQueue,Path=SelectedItems.Count}" HorizontalAlignment="Right" Width="172" Height="25" VerticalAlignment="Top"/>
+        <Button x:Name="btnGetAuthToken" Content="Get Auth Token" HorizontalAlignment="Left" Margin="164,26,0,0" VerticalAlignment="Top" Width="145" Height="23" Click="btnGetAuthToken_Click" Padding="1,0,1,1" IsEnabled="{Binding ElementName=txtbox_username,Path=Text.Length}" />
+        <ComboBox x:Name="playlistSelector" HorizontalAlignment="Left" Margin="9,271,0,0" VerticalAlignment="Top" Width="300" Height="23" SelectionChanged="GetVideos"/>
+        <Label x:Name="lbl_selectedPlaylist" Content="Playlists" Margin="5,245,0,0" FontStyle="Italic" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="112"/>
+        <ListBox x:Name="requestBox" Margin="10,10,10,9" Grid.Column="1"/>
+        <Rectangle x:Name="authStatus" HorizontalAlignment="Left" Height="5" Margin="164,50,0,0" VerticalAlignment="Top" Width="145" Fill="Red" />
     </Grid>
 </Window>
