@@ -17,7 +17,7 @@ namespace Requestify
         private string username;
         private static int currencyCount;
 
-        private static string channel;
+        private static string _channel;
         public static List<Video> listVideos = new List<Video>();
 
         private TcpClient tcpClient;
@@ -40,6 +40,7 @@ namespace Requestify
 
         public void joinRoom(string channel)
         {
+            _channel = channel;
             outputStream.WriteLine($"JOIN #{channel}");
             outputStream.Flush();
         }
@@ -54,7 +55,7 @@ namespace Requestify
 
         public void sendChatMessage(string message)
         {
-            sendIrcMessage($":{username}!{username}@{username}.tmi.twitch.tv PRIVMSG #{channel} :{message}");
+            sendIrcMessage($":{username}!{username}@{username}.tmi.twitch.tv PRIVMSG #{_channel} :{message}");
         }
 
         public string readMessage()
@@ -91,7 +92,7 @@ namespace Requestify
         {
             IrcClient irc = new IrcClient("irc.twitch.tv", 6667, Settings.Default.username, "oauth:" + Settings.Default.oauthToken);
 
-            irc.joinRoom(channel);
+            irc.joinRoom(_channel);
 
             irc.sendChatMessage(songRequest);
 
@@ -129,7 +130,7 @@ namespace Requestify
             irc.joinRoom(channel);
 
             Settings.Default.currency = GetCurrencyName(irc);
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             currencyCount = GetCurrencyCount(irc, Settings.Default.currency);
 
             while (true)
@@ -145,8 +146,16 @@ namespace Requestify
             do
             {
                 string response = irc.readMessage();
+                if (response.Contains("PRIVMSG"))
+                {
+                    Console.WriteLine(formatMessage(response));
+                }
+                else
+                {
+                    Console.WriteLine(response);
+                }
 
-                Console.WriteLine(response);
+                
                 if (response.Contains(@"End of /NAMES"))
                 {
                     break;
