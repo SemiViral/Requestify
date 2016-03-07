@@ -94,8 +94,7 @@ namespace Requestify
 
             irc.joinRoom(_channel);
 
-            irc.sendChatMessage(songRequest);
-
+            irc.sendChatMessage($"!song add {songRequest}");
         }
 
         public static void CreateIrcThread(string username, string password, string channel)
@@ -128,21 +127,6 @@ namespace Requestify
             IrcClient irc = new IrcClient("irc.twitch.tv", 6667, username, "oauth:" + pass);
 
             irc.joinRoom(channel);
-
-            Settings.Default.currency = GetCurrencyName(irc);
-            Thread.Sleep(2000);
-            currencyCount = GetCurrencyCount(irc, Settings.Default.currency);
-
-            while (true)
-            {
-                string message = irc.readMessage();
-
-                Bot.CheckIncomingMessage(irc, message);
-            }
-        }
-
-        private static string GetCurrencyName(IrcClient irc)
-        {
             do
             {
                 string response = irc.readMessage();
@@ -155,14 +139,28 @@ namespace Requestify
                     Console.WriteLine(response);
                 }
 
-                
+
                 if (response.Contains(@"End of /NAMES"))
                 {
                     break;
                 }
             }
             while (true);
+            /*
+            Settings.Default.currency = GetCurrencyName(irc);
+            Thread.Sleep(2000);
+            currencyCount = GetCurrencyCount(irc, Settings.Default.currency);
+            */
+            while (true)
+            {
+                string message = irc.readMessage();
 
+                Bot.CheckIncomingMessage(irc, message);
+            }
+        }
+
+        private static string GetCurrencyName(IrcClient irc)
+        {
             irc.sendChatMessage("!currency");
 
             do

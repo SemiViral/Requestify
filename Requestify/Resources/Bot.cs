@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Requestify.Resources
 {
@@ -24,7 +26,7 @@ namespace Requestify.Resources
             }
             else if (message.StartsWith("PING :tmi.twitch.tv"))
             {
-                irc.sendChatMessage("PONG :tmi.twitch.tv");
+                irc.sendIrcMessage("PONG :tmi.twitch.tv");
             }
             
         }
@@ -53,6 +55,77 @@ namespace Requestify.Resources
             return formattedMessage;
         }
 
+        public static void AutoRequest(List<Video> vidList, List<Video> requestedList, string channel)
+        {
+            Thread ircThread = new Thread(() =>
+            {
+                IrcClient irc = new IrcClient("irc.Twitch.tv", 6667, Settings.Default.username, "oauth:" + Settings.Default.oauthToken);
+                irc.joinRoom(channel);
+
+                while (vidList.Count > 0)
+                {
+                    AddVideoToQueue(vidList, requestedList, irc);
+                }
+            }
+            );
+            ircThread.IsBackground = true;
+            ircThread.Name = "Request-Thread";
+            ircThread.Start();
+        }
+
+        public static void AddVideoToQueue(List<Video> vidList, List<Video> requestedList, IrcClient irc)
+        {
+            if (requestedList.Count < 5)
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
+                    ((MainWindow)Application.Current.MainWindow).playlistQueue.ItemsSource = vidList;
+                    ((MainWindow)Application.Current.MainWindow).requestBox.ItemsSource = requestedList;
+                }));
+
+                for (var i = requestedList.Count; i < 5; i++)
+                {
+                    IrcClient.RequestSong(vidList[0].id);
+                    string response;
+
+                    do
+                    {
+                        response = irc.readMessage();
+
+
+                    } while (!response.Contains($"{Settings.Default.username}, Bought {vidList[0].title}"));
+                    
+                    requestedList.Add(vidList[0]);
+                    vidList.RemoveAt(0);
+                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
+                        ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
+                        ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
+                    }));
+                }
+
+                do
+                {
+                    irc.sendChatMessage("!song");
+
+                    string response = irc.readMessage();
+
+                    for (var i = 0; i < requestedList.Count; i++)
+                    {
+                        if (response.Contains(requestedList[i].title))
+                        {
+                            requestedList.Remove(requestedList[i]);
+                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
+                                ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
+                            }));
+                        }
+                    }
+
+                    Thread.Sleep(120000);
+
+                    break;
+
+                } while (true);
+            }
+        }
 
     }
 }

@@ -22,11 +22,12 @@
         <Button x:Name="btnAddPlaylist" Content="Add" HorizontalAlignment="Left" Margin="228,222,0,0" VerticalAlignment="Top" Width="81" Height="23" IsEnabled="{Binding ElementName=txtbox_playlistID,Path=Text.Length}" Click="btnAddPlaylist_Click" Padding="1,0,1,1"/>
         <ListBox x:Name="playlistQueue" HorizontalAlignment="Left" Margin="10,300,0,69" Width="299" IsSynchronizedWithCurrentItem="False" SelectionChanged="playlistQueue_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
         <Label x:Name="lbl_selectedSong" Content="Selected Song (0/0)" Margin="10,507,0,0" FontStyle="Italic" HorizontalAlignment="Left" Width="112" Height="22" VerticalAlignment="Top" Padding="0,2,0,0"/>
-        <Button x:Name="btnRequestSong" Content="Request (1453 coins available)" Margin="0,505,8,0" Click="btnRequestSong_Click" Padding="5,0,5,1" IsEnabled="{Binding ElementName=playlistQueue,Path=SelectedItems.Count}" HorizontalAlignment="Right" Width="172" Height="25" VerticalAlignment="Top"/>
+        <Button x:Name="btnRequestSong" Content="Request Song(s)" Margin="0,505,8,0" Click="btnRequestSong_Click" Padding="5,0,5,1" IsEnabled="{Binding ElementName=playlistQueue,Path=SelectedItems.Count}" HorizontalAlignment="Right" Width="172" Height="25" VerticalAlignment="Top"/>
         <Button x:Name="btnGetAuthToken" Content="Get Auth Token" HorizontalAlignment="Left" Margin="164,26,0,0" VerticalAlignment="Top" Width="145" Height="23" Click="btnGetAuthToken_Click" Padding="1,0,1,1" IsEnabled="{Binding ElementName=txtbox_username,Path=Text.Length}" />
         <ComboBox x:Name="playlistSelector" HorizontalAlignment="Left" Margin="9,271,0,0" VerticalAlignment="Top" Width="300" Height="23" SelectionChanged="GetVideos"/>
         <Label x:Name="lbl_selectedPlaylist" Content="Playlists" Margin="5,245,0,0" FontStyle="Italic" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="112"/>
         <ListBox x:Name="requestBox" Margin="10,10,10,9" Grid.Column="1"/>
         <Rectangle x:Name="authStatus" HorizontalAlignment="Left" Height="5" Margin="164,50,0,0" VerticalAlignment="Top" Width="145" Fill="Red" />
+        <CheckBox x:Name="autoRequests" Content="Auto-Request Mode?" HorizontalAlignment="Left" Margin="139,535,0,0" VerticalAlignment="Top" Width="170"/>
     </Grid>
 </Window>

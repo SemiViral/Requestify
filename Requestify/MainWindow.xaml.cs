@@ -71,14 +71,22 @@ namespace Requestify
         
         private void btnRequestSong_Click(object sender, RoutedEventArgs e)
         {
-            IrcClient.CreateIrcSendThread(Settings.Default.username, Settings.Default.oauthToken, channel, $"!song add {listVideos[((MainWindow)Application.Current.MainWindow).playlistQueue.SelectedIndex].id}");
+            if (autoRequests.IsChecked == true)
+            {
+                Bot.AutoRequest(listVideos, requests, channel);
+            }
+            else
+            {
+                IrcClient.CreateIrcSendThread(Settings.Default.username, Settings.Default.oauthToken, channel, listVideos[((MainWindow)Application.Current.MainWindow).playlistQueue.SelectedIndex].id);
+
+                requests.Add(listVideos[playlistQueue.SelectedIndex]);
+                requestBox.Items.Refresh();
+
+                listVideos.RemoveAt(playlistQueue.SelectedIndex);
+                playlistQueue.Items.Refresh();
+            }
+
             
-
-            requests.Add(listVideos[playlistQueue.SelectedIndex]);
-            requestBox.Items.Refresh();
-
-            listVideos.RemoveAt(playlistQueue.SelectedIndex);
-            playlistQueue.Items.Refresh();
         }
 
         private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
@@ -128,8 +136,5 @@ namespace Requestify
                 txtbox_username.IsEnabled = false;
             }
         }
-
-        
     }
-
 }
