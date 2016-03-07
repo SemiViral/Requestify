@@ -24,11 +24,6 @@ namespace Requestify
         private StreamReader inputStream;
         private StreamWriter outputStream;
 
-        public IrcClient()
-        {
-
-        }
-
         public IrcClient (string ip, int port, string userName, string password)
         {
             username = userName;
