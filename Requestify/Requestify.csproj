@@ -88,9 +88,13 @@
     <Compile Include="Authentication.xaml.cs">
       <DependentUpon>Authentication.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Resources\API\TwitchResponse.cs" />
+    <Compile Include="Resources\API\TwitchResponse.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Resources\Bot.cs" />
-    <Compile Include="Resources\Playlist.cs" />
+    <Compile Include="Resources\Playlist.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Resources\IrcClient.cs" />
     <Compile Include="Resources\API\YoutubeResponse.cs" />
     <Compile Include="Resources\Video.cs" />
