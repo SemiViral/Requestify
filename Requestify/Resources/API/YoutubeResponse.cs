@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Requestify.Resources.API
 {
-    class YoutubeResponse
+	internal class YoutubeResponse
     {
         public class PageInfo
         {

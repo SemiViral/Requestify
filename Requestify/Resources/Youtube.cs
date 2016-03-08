@@ -5,40 +5,39 @@ using Requestify.Resources.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 
 namespace Requestify
 {
-    class Youtube
+	internal class Youtube
     {
         public static List<YoutubeResponse.Item> GetPlaylistItems(string playlistID)
         {
             string pageToken = "";
 
-            string apiBase = "https://www.googleapis.com/youtube/v3/playlistItems?";
-            string apiPart = "part=snippet";
-            string apiMaxResults = "&maxResults=50";
+            const string apiBase = "https://www.googleapis.com/youtube/v3/playlistItems?";
+            const string apiPart = "part=snippet";
+            const string apiMaxResults = "&maxResults=50";
             string apiNextPageToken = $"&pageToken={pageToken}";
             string apiPlaylistId = $"&playlistId={playlistID}";
-            string apiFields = "&fields=items%2CnextPageToken%2CpageInfo%2CprevPageToken";
+            const string apiFields = "&fields=items%2CnextPageToken%2CpageInfo%2CprevPageToken";
             string apiKey = $"&key={Settings.Default.apiKey}";
 
-            YoutubeResponse.RootObject results;
-            List<YoutubeResponse.Item> itemResults = new List<YoutubeResponse.Item>();
+	        List<YoutubeResponse.Item> itemResults = new List<YoutubeResponse.Item>();
 
             int totalPages;
             int pagesComplete = 0;
 
             do
             {
-                var client = new RestClient();
-                client.BaseUrl = new Uri(BuildApiUri(pageToken, apiBase, apiPart, apiMaxResults, apiNextPageToken, apiPlaylistId, apiFields, apiKey));
-                var request = new RestRequest(Method.GET);
+	            RestClient client = new RestClient {
+		            BaseUrl =
+			            new Uri(BuildApiUri(pageToken, apiBase, apiPart, apiMaxResults, apiNextPageToken, apiPlaylistId, apiFields,
+				            apiKey))
+	            };
+	            RestRequest request = new RestRequest(Method.GET);
 
                 IRestResponse response = client.Execute(request);
-                results = JsonConvert.DeserializeObject<YoutubeResponse.RootObject>(response.Content);
+                YoutubeResponse.RootObject results = JsonConvert.DeserializeObject<YoutubeResponse.RootObject>(response.Content);
 
                 itemResults.AddRange(results.items);
 
@@ -56,19 +55,11 @@ namespace Requestify
             return itemResults;
         }
 
-        public static List<Video> CreatePlaylist(List<YoutubeResponse.Item> playlistItems)
-        {
-            List<Video> playlist = new List<Video>();
-
-            foreach (var item in playlistItems)
-            {
-                playlist.Add(new Video(item.snippet.title, item.snippet.resourceId.videoId));
-            }
-
-            return playlist;
+        public static List<Video> CreatePlaylist(List<YoutubeResponse.Item> playlistItems) {
+	        return playlistItems.Select(item => new Video(item.snippet.title, item.snippet.resourceId.videoId)).ToList();
         }
 
-        public static string BuildApiUri(string pageToken, string apiBase, string apiPart, string apiMaxResults, string apiNextPageToken, string apiPlaylistId, string apiFields, string apiKey)
+		public static string BuildApiUri(string pageToken, string apiBase, string apiPart, string apiMaxResults, string apiNextPageToken, string apiPlaylistId, string apiFields, string apiKey)
         {
             string uriString;
 

@@ -5,14 +5,12 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
 namespace Requestify
 {
-    class Twitch
+	internal class Twitch
     {
         // Access scope that the program needs to work with the Twitch API
         public static Dictionary<string, bool> Scopes = new Dictionary<string, bool>()
@@ -56,15 +54,8 @@ namespace Requestify
         // Returns a String of all scopes with the value of TRUE
         private static string ScopesToString(Dictionary<string, bool> dict)
         {
-            string scopeString = "";
-            foreach (var scope in dict)
-            {
-                if (scope.Value)
-                {
-                    scopeString += scope.Key + "+";
-                }
-            }
-            scopeString = scopeString.TrimEnd('+');
+            string scopeString = dict.Where(scope => scope.Value).Aggregate("", (current, scope) => current + scope.Key + "+");
+	        scopeString = scopeString.TrimEnd('+');
             return scopeString;
         }
 
@@ -81,9 +72,10 @@ namespace Requestify
         public static bool ValidateToken(string token)
         {
             // Create the Request
-            var client = new RestClient();
-            client.BaseUrl = new Uri(baseApiUrl);
-            var request = new RestRequest("?oauth_token=" + token, Method.GET);
+	        RestClient client = new RestClient {
+		        BaseUrl = new Uri(baseApiUrl)
+	        };
+	        RestRequest request = new RestRequest("?oauth_token=" + token, Method.GET);
 
             // Make the Request
             IRestResponse response = client.Execute(request);
@@ -106,11 +98,9 @@ namespace Requestify
                 ((MainWindow)Application.Current.MainWindow).authStatus.Fill = new SolidColorBrush(greenText);
                 return accessToken;
             }
-            else
-            {
-                ((MainWindow)Application.Current.MainWindow).authStatus.Fill = new SolidColorBrush(redText);
-                return "";
-            }
+
+	        ((MainWindow)Application.Current.MainWindow).authStatus.Fill = new SolidColorBrush(redText);
+	        return "";
         }
     }
 }

@@ -1,16 +1,13 @@
 ﻿using Requestify.Properties;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace Requestify.Resources
 {
-    class Bot
+	internal class Bot
     {
         // Handling of the incoming messages
         public static void CheckIncomingMessage(IrcClient irc, string message)
@@ -43,12 +40,12 @@ namespace Requestify.Resources
             string user = unformattedMessage.Substring
                 (
                     1,
-                    (unformattedMessage.IndexOf("!") - 1)
+                    (unformattedMessage.IndexOf("!", StringComparison.Ordinal) - 1)
                 ).ToUpper();
             string message = unformattedMessage.Substring(
                 (
-                    unformattedMessage.IndexOf(":", 1) + 1),
-                    unformattedMessage.Length - (unformattedMessage.IndexOf(":", 1) + 1)
+                    unformattedMessage.IndexOf(":", 1, StringComparison.Ordinal) + 1),
+                    unformattedMessage.Length - (unformattedMessage.IndexOf(":", 1, StringComparison.Ordinal) + 1)
                  );
             string formattedMessage = $"{user}: {message}";
 
@@ -57,90 +54,88 @@ namespace Requestify.Resources
 
         public static void AutoRequest(List<Video> vidList, List<Video> requestedList, string channel)
         {
-            Thread ircThread = new Thread(() =>
-            {
-                IrcClient irc = new IrcClient("irc.Twitch.tv", 6667, Settings.Default.username, "oauth:" + Settings.Default.oauthToken);
-                irc.joinRoom(channel);
+	        Thread ircThread = new Thread(() => {
+		        IrcClient irc = new IrcClient("irc.Twitch.tv", 6667, Settings.Default.username,
+			        "oauth:" + Settings.Default.oauthToken);
+		        irc.joinRoom(channel);
 
-                while (vidList.Count > 0)
-                {
-                    AddVideoToQueue(vidList, requestedList, irc);
-                }
-            }
-            );
-            ircThread.IsBackground = true;
-            ircThread.Name = "Request-Thread";
-            ircThread.Start();
+		        while (vidList.Count > 0) {
+			        AddVideoToQueue(vidList, requestedList, irc);
+		        }
+	        }
+		        ) {
+			        IsBackground = true,
+			        Name = "Request-Thread"
+		        };
+	        ircThread.Start();
         }
 
         public static void AddVideoToQueue(List<Video> vidList, List<Video> requestedList, IrcClient irc)
         {
-            if (requestedList.Count < 5)
-            {
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
-                    ((MainWindow)Application.Current.MainWindow).playlistQueue.ItemsSource = vidList;
-                    ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
-                    ((MainWindow)Application.Current.MainWindow).requestBox.ItemsSource = requestedList;
-                    ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
-                }));
+	        if (requestedList.Count >= 5) return;
 
-                for (var i = requestedList.Count; i < 5; i++)
-                {
-                    IrcClient.RequestSong(vidList[0].id);
-                    string response;
+	        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
+		        ((MainWindow)Application.Current.MainWindow).playlistQueue.ItemsSource = vidList;
+		        ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
+		        ((MainWindow)Application.Current.MainWindow).requestBox.ItemsSource = requestedList;
+		        ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
+	        }));
 
-                    do
-                    {
-                        response = irc.readMessage();
+	        for (int i = requestedList.Count; i < 5; i++)
+	        {
+		        IrcClient.RequestSong(vidList[0].id);
+		        string response;
+
+		        do
+		        {
+			        response = irc.readMessage();
 
 
-                    } while (!response.Contains($"{Settings.Default.username}, Bought {vidList[0].title}"));
+		        } while (!response.Contains($"{Settings.Default.username}, Bought {vidList[0].title}"));
                     
-                    requestedList.Add(vidList[0]);
-                    vidList.RemoveAt(0);
-                    Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
-                        ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
-                        ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
-                    }));
+		        requestedList.Add(vidList[0]);
+		        vidList.RemoveAt(0);
+		        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
+			        ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
+			        ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
+		        }));
 
-                    Thread.Sleep(1000);
-                }
+		        Thread.Sleep(1000);
+	        }
 
-                do
-                {
-                    Thread.Sleep(30000);
-                    irc.sendChatMessage("!song");
+	        do
+	        {
+		        Thread.Sleep(30000);
+		        irc.sendChatMessage("!song");
 
-                    string response;
-                    bool isMatch = false;
+		        string response;
+		        bool isMatch = false;
 
-                    do
-                    {
-                        response = irc.readMessage();
+		        do
+		        {
+			        response = irc.readMessage();
 
-                    } while (!response.Contains("Currently playing "));
+		        } while (!response.Contains("Currently playing "));
 
 
-                    for (var i = 0; i < requestedList.Count; i++)
-                    {
-                        if (response.Contains(requestedList[i].title))
-                        {
-                            isMatch = true;
-                            requestedList.Remove(requestedList[i]);
-                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-                            {
-                                ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
-                            }));
-                            break;
-                        }
-                    }
-                    if (!isMatch)
-                    {
-                        Thread.Sleep(120000);
-                    }
+		        for (int i = 0; i < requestedList.Count; i++)
+		        {
+			        if (!response.Contains(requestedList[i].title)) continue;
 
-                } while (requestedList.Count == 5);
-            }
+			        isMatch = true;
+			        requestedList.Remove(requestedList[i]);
+			        Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+			        {
+				        ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
+			        }));
+			        break;
+		        }
+		        if (!isMatch)
+		        {
+			        Thread.Sleep(120000);
+		        }
+
+	        } while (requestedList.Count == 5);
         }
 
     }
