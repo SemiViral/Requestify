@@ -29,5 +29,6 @@
         <ListBox x:Name="requestBox" Margin="10,10,10,9" Grid.Column="1"/>
         <Rectangle x:Name="authStatus" HorizontalAlignment="Left" Height="5" Margin="164,50,0,0" VerticalAlignment="Top" Width="145" Fill="Red" />
         <CheckBox x:Name="autoRequests" Content="Auto-Request Mode?" HorizontalAlignment="Left" Margin="139,535,0,0" VerticalAlignment="Top" Width="170"/>
+        <Button x:Name="deleteSong" Content="Del" HorizontalAlignment="Left" Margin="281,535,0,0" VerticalAlignment="Top" Width="30" Padding="1,0,1,1" Click="deleteSong_Click"/>
     </Grid>
 </Window>

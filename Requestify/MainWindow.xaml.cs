@@ -136,5 +136,11 @@ namespace Requestify
                 txtbox_username.IsEnabled = false;
             }
         }
+
+        private void deleteSong_Click(object sender, RoutedEventArgs e)
+        {
+            listVideos.RemoveAt(playlistQueue.SelectedIndex);
+            playlistQueue.Items.Refresh();
+        }
     }
 }

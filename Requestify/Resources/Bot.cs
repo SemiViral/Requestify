@@ -79,7 +79,9 @@ namespace Requestify.Resources
             {
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
                     ((MainWindow)Application.Current.MainWindow).playlistQueue.ItemsSource = vidList;
+                    ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
                     ((MainWindow)Application.Current.MainWindow).requestBox.ItemsSource = requestedList;
+                    ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
                 }));
 
                 for (var i = requestedList.Count; i < 5; i++)
@@ -100,30 +102,44 @@ namespace Requestify.Resources
                         ((MainWindow)Application.Current.MainWindow).playlistQueue.Items.Refresh();
                         ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
                     }));
+
+                    Thread.Sleep(1000);
                 }
 
                 do
                 {
+                    Thread.Sleep(30000);
                     irc.sendChatMessage("!song");
 
-                    string response = irc.readMessage();
+                    string response;
+                    bool isMatch = false;
+
+                    do
+                    {
+                        response = irc.readMessage();
+
+                    } while (!response.Contains("Currently playing "));
+
 
                     for (var i = 0; i < requestedList.Count; i++)
                     {
                         if (response.Contains(requestedList[i].title))
                         {
+                            isMatch = true;
                             requestedList.Remove(requestedList[i]);
-                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
+                            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                            {
                                 ((MainWindow)Application.Current.MainWindow).requestBox.Items.Refresh();
                             }));
+                            break;
                         }
                     }
+                    if (!isMatch)
+                    {
+                        Thread.Sleep(120000);
+                    }
 
-                    Thread.Sleep(120000);
-
-                    break;
-
-                } while (true);
+                } while (requestedList.Count == 5);
             }
         }
 
